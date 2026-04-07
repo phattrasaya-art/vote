@@ -334,7 +334,7 @@ function login(){
 }
 
 async function vote(name, emoji){
-
+console.log("VOTE CLICKED", name, emoji);
   if(!currentUser || currentUser.role !== "voter"){
     return alert("ไม่มีสิทธิ์");
   }
@@ -393,7 +393,10 @@ function getMonth(){
 }
 
 function render(){
-
+if(!currentUser){
+    console.log("no user yet");
+    return;
+  }
 const monthNames = [
  "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
@@ -457,7 +460,7 @@ document.getElementById("monthTitle").innerText =
 <div style="text-align:center;margin-top:6px;">
   <button onclick="undoVote('${emp.name}')">↩️ ยกเลิกโหวตล่าสุด</button>
 </div>
-${currentUser.role==="admin" ? `
+${currentUser && currentUser.role==="admin" ? `
 <div style="text-align:center;margin-top:6px;">
   <button onclick="editScore('${emp.name}','${currentMonth}')">
     ✏️ แก้คะแนน
@@ -709,8 +712,10 @@ window.onload = async function(){
   initMonthSelector();
   initVoteMonth();
   initReportMonth();
-  await loadData(); // ✅ เพิ่ม
+  await loadData();
+if(currentUser){
   render();
+}
 };
 function logout(){
   localStorage.removeItem("user");
