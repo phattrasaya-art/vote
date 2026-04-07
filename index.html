@@ -338,7 +338,7 @@ async function vote(name, emoji, score, month) {
   console.log("VOTE CLICKED", name, emoji);
 
   try {
-    const res = await fetch(GAS_URL, {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
