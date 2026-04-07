@@ -371,42 +371,6 @@ async function vote(name, emoji){
     alert("เชื่อมต่อ server ไม่ได้");
   }
 }
-  if(!currentUser || currentUser.role!=="voter"){
-    return alert("ไม่มีสิทธิ์");
-  }
-
-  const m = currentMonth;
-  const score = emojiScores[emoji];
-
-  try {
-
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "vote",
-        name,
-        emoji,
-        score,
-        month: m
-      })
-    });
-
-    const text = await res.text();
-    console.log("SERVER:", text);
-
-    if(!res.ok){
-      alert("server error");
-      return;
-    }
-
-    await loadData();
-    render();
-
-  } catch(err){
-    console.error(err);
-    alert("เชื่อมต่อ server ไม่ได้");
-  }
-}
 
 function changeMonth(val){
   currentMonth = val;
