@@ -732,13 +732,13 @@ async function loadData(){
 
     if(!votes[d.month]) votes[d.month] = {};
 
-    // 🔥 นับ emoji แยก
+    // 🔥 เก็บตาม emoji (ให้ตรงกับ render)
     const key = d.name + "_" + d.emoji;
+
     votes[d.month][key] = (votes[d.month][key] || 0) + 1;
 
   });
 
-  console.log("votes:", votes); // 👈 debug
 }
 function exportExcel(){
 
