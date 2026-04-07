@@ -260,7 +260,7 @@ body{
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbw-8zkXZ0CB4BcdWT1DG8-U3-OXD9nuE1anRoRU-I-jjdSRzUxXZnBdAOM_RO40LWs3/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyMrXlgKoStFNaGbQMt8xxqc7-IgQ6YNQlb7h1nojdzTGPKL5QlujTfBv5OBbjl5AeZ/exec";
 const userData = localStorage.getItem("user");
 
 if(!userData){
@@ -333,18 +333,12 @@ function login(){
   }else alert("ผิด");
 }
 
-async function vote(name, emoji){
-console.log("VOTE CLICKED", name, emoji);
-  if(!currentUser || currentUser.role !== "voter"){
-    return alert("ไม่มีสิทธิ์");
-  }
+async function vote(name, emoji, score, month) {
 
-  const score = emojiScores[emoji];
-  const month = currentMonth;
+  console.log("VOTE CLICKED", name, emoji);
 
   try {
-
-    const res = await fetch(API_URL, {
+    const res = await fetch(GAS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -359,15 +353,12 @@ console.log("VOTE CLICKED", name, emoji);
     });
 
     const text = await res.text();
-    console.log(text);
+    console.log("SERVER RESPONSE:", text);
 
-    alert(text);
+    alert("โหวตสำเร็จ");
 
-    await loadData();
-    render();
-
-  } catch(err){
-    console.error(err);
+  } catch (err) {
+    console.error("ERROR:", err);
     alert("เชื่อมต่อ server ไม่ได้");
   }
 }
