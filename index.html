@@ -72,6 +72,7 @@ body{
   margin:0;padding:10px;color:#111827;
 }
 
+.header{
   display:flex;justify-content:space-between;align-items:center;
   background:white;padding:12px;border-radius:16px;margin-bottom:10px;
 }
@@ -260,7 +261,7 @@ body{
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbyMrXlgKoStFNaGbQMt8xxqc7-IgQ6YNQlb7h1nojdzTGPKL5QlujTfBv5OBbjl5AeZ/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbxsY2JyvPt3vAlR7fpQA9aOZi1hAFeV0YQT_nEvvSxuI3oqClxh2vnjPJoKU--xufZS/exec";
 const userData = localStorage.getItem("user");
 
 if(!userData){
@@ -333,32 +334,33 @@ function login(){
   }else alert("ผิด");
 }
 
-async function vote(name, emoji, score, month) {
+function vote(name,emoji){
 
-  console.log("VOTE CLICKED", name, emoji);
+  if(!currentUser || currentUser.role!=="voter")
+    return alert("ไม่มีสิทธิ์");
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "vote",
-        name,
-        emoji,
-        score,
-        month
-      })
-    });
+  const m = currentMonth; // 👉 ใช้โครงเดิม (สามารถต่อ Google Sheet ได้ภายหลัง)
+  const score = emojiScores[emoji];
+  // 🔥 เพิ่มตรงนี้ (ส่งไป Google Sheet)
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      emoji: emoji,
+      score: score,
+      month: m
+    })
+  });
 
-    const text = await res.text();
-    console.log("SERVER RESPONSE:", text);
+  if(!votes[m]) votes[m]={};
+  if(!votes[m][name]) votes[m][name]=0;
 
-    alert("โหวตสำเร็จ");
+  votes[m][name]+=score;
+  votes[m][name+"_"+emoji]=(votes[m][name+"_"+emoji]||0)+1;
 
-  } catch (err) {
-    console.error("ERROR:", err);
-    alert("เชื่อมต่อ server ไม่ได้");
-  }
+  render();
 }
+
 function changeMonth(val){
   currentMonth = val;
   render();
@@ -380,10 +382,7 @@ function getMonth(){
 }
 
 function render(){
-if(!currentUser){
-    console.log("no user yet");
-    return;
-  }
+
 const monthNames = [
  "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
  "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
@@ -447,13 +446,6 @@ document.getElementById("monthTitle").innerText =
 <div style="text-align:center;margin-top:6px;">
   <button onclick="undoVote('${emp.name}')">↩️ ยกเลิกโหวตล่าสุด</button>
 </div>
-${currentUser && currentUser.role==="admin" ? `
-<div style="text-align:center;margin-top:6px;">
-  <button onclick="editScore('${emp.name}','${currentMonth}')">
-    ✏️ แก้คะแนน
-  </button>
-</div>
-` : ""}
     </div>`;
   });
 
@@ -490,6 +482,18 @@ ${currentUser && currentUser.role==="admin" ? `
       <td>${x.score}</td>
     </tr>`;
   });
+}
+
+function showPage(p){
+  votePage.style.display="none";
+  reportPage.style.display="none";
+  adminPage.style.display="none";
+
+  if(p==="vote") votePage.style.display="block";
+  if(p==="report") reportPage.style.display="block";
+  if(p==="admin") adminPage.style.display="block";
+
+  render();
 }
 
 function addEmployee(){
@@ -699,10 +703,8 @@ window.onload = async function(){
   initMonthSelector();
   initVoteMonth();
   initReportMonth();
-  await loadData();
-if(currentUser){
+  await loadData(); // ✅ เพิ่ม
   render();
-}
 };
 function logout(){
   localStorage.removeItem("user");
@@ -757,38 +759,6 @@ function undoVote(name){
   .then(msg => {
     alert(msg);
     loadData().then(render);
-  });
-}
-function editScore(name, month){
-
-  if(!currentUser || currentUser.role !== "admin"){
-    alert("เฉพาะแอดมิน");
-    return;
-  }
-
-  const oldEmoji = prompt("emoji เดิม (❤️👍⭐😡)");
-  const oldScore = prompt("คะแนนเดิม (2,1,1,-1)");
-
-  const newEmoji = prompt("emoji ใหม่");
-  const newScore = prompt("คะแนนใหม่");
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "edit",
-      name: name,
-      month: month,
-      oldEmoji,
-      oldScore,
-      newEmoji,
-      newScore,
-      user: currentUser.username
-    })
-  })
-  .then(res => res.text())
-  .then(msg => {
-    alert(msg);
-    loadData().then(render); // 🔥 realtime refresh
   });
 }
 </script>
