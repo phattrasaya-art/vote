@@ -359,7 +359,7 @@ async function vote(name, emoji){
     });
 
     const text = await res.text();
-    console.log("SERVER:", text);
+    console.log(text);
 
     alert(text);
 
@@ -369,8 +369,6 @@ async function vote(name, emoji){
   } catch(err){
     console.error(err);
     alert("เชื่อมต่อ server ไม่ได้");
-  }
-
 }
   if(!currentUser || currentUser.role!=="voter"){
     return alert("ไม่มีสิทธิ์");
