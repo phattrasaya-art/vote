@@ -334,7 +334,32 @@ function login(){
 }
 
 async function vote(name, emoji){
+function vote(name, emoji, score, month) {
 
+  fetch(GAS_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "vote",
+      name,
+      emoji,
+      score,
+      month
+    })
+  })
+  .then(res => res.text())
+  .then(data => {
+    console.log(data);
+    alert(data); // จะขึ้น success
+  })
+  .catch(err => {
+    console.error(err);
+    alert("error");
+  });
+
+}
   if(!currentUser || currentUser.role!=="voter"){
     return alert("ไม่มีสิทธิ์");
   }
