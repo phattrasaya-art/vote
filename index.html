@@ -340,7 +340,6 @@ async function vote(name, emoji, score, month) {
   try {
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: {
       body: JSON.stringify({
         action: "vote",
         name,
@@ -360,7 +359,6 @@ async function vote(name, emoji, score, month) {
     alert("เชื่อมต่อ server ไม่ได้");
   }
 }
-
 function changeMonth(val){
   currentMonth = val;
   render();
