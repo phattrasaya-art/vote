@@ -723,23 +723,23 @@ function logout(){
 }
 async function loadData(){
 
-  const res = await fetch(API_URL + "?t=" + new Date().getTime()); // 🔥 กัน cache
+  const res = await fetch(API_URL);
   const data = await res.json();
 
   votes = {};
 
-  data.forEach(d=>{
+  data.forEach(d => {
 
-    if(!votes[d.month]) votes[d.month]={};
-    if(!votes[d.month][d.name]) votes[d.month][d.name]=0;
+    if(!votes[d.month]) votes[d.month] = {};
 
-    votes[d.month][d.name] += Number(d.score);
-
+    // 🔥 นับ emoji แยก
     const key = d.name + "_" + d.emoji;
     votes[d.month][key] = (votes[d.month][key] || 0) + 1;
-  });
-}
 
+  });
+
+  console.log("votes:", votes); // 👈 debug
+}
 function exportExcel(){
 
   fetch(API_URL + "?action=export")
