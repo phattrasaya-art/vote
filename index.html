@@ -334,30 +334,42 @@ function login(){
 }
 
 async function vote(name, emoji){
-function vote(name, emoji, score, month) {
 
-  fetch(GAS_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action: "vote",
-      name,
-      emoji,
-      score,
-      month
-    })
-  })
-  .then(res => res.text())
-  .then(data => {
-    console.log(data);
-    alert(data); // จะขึ้น success
-  })
-  .catch(err => {
+  if(!currentUser || currentUser.role !== "voter"){
+    return alert("ไม่มีสิทธิ์");
+  }
+
+  const score = emojiScores[emoji];
+  const month = currentMonth;
+
+  try {
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "vote",
+        name,
+        emoji,
+        score,
+        month
+      })
+    });
+
+    const text = await res.text();
+    console.log("SERVER:", text);
+
+    alert(text);
+
+    await loadData();
+    render();
+
+  } catch(err){
     console.error(err);
-    alert("error");
-  });
+    alert("เชื่อมต่อ server ไม่ได้");
+  }
 
 }
   if(!currentUser || currentUser.role!=="voter"){
