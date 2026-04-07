@@ -334,31 +334,37 @@ function login(){
   }else alert("ผิด");
 }
 
-function vote(name,emoji){
+async function vote(name,emoji){
 
   if(!currentUser || currentUser.role!=="voter")
     return alert("ไม่มีสิทธิ์");
 
-  const m = currentMonth; // 👉 ใช้โครงเดิม (สามารถต่อ Google Sheet ได้ภายหลัง)
+  const m = currentMonth;
   const score = emojiScores[emoji];
-  // 🔥 เพิ่มตรงนี้ (ส่งไป Google Sheet)
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      name: name,
-      emoji: emoji,
-      score: score,
-      month: m
-    })
-  });
 
-  if(!votes[m]) votes[m]={};
-  if(!votes[m][name]) votes[m][name]=0;
+  try {
 
-  votes[m][name]+=score;
-  votes[m][name+"_"+emoji]=(votes[m][name+"_"+emoji]||0)+1;
+    await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        emoji,
+        score,
+        month: m
+      })
+    });
 
-  render();
+    // ✅ โหลดใหม่จาก server เท่านั้น
+    await loadData();
+    render();
+
+  } catch(err){
+    console.error(err);
+    alert("เชื่อมต่อ server ไม่ได้");
+  }
 }
 
 function changeMonth(val){
@@ -705,6 +711,11 @@ window.onload = async function(){
   initReportMonth();
   await loadData(); // ✅ เพิ่ม
   render();
+  // 🔥 เพิ่มตรงนี้
+  setInterval(async () => {
+    await loadData();
+    render();
+  }, 5000);
 };
 function logout(){
   localStorage.removeItem("user");
@@ -712,7 +723,7 @@ function logout(){
 }
 async function loadData(){
 
-  const res = await fetch(API_URL);
+  const res = await fetch(API_URL + "?t=" + new Date().getTime()); // 🔥 กัน cache
   const data = await res.json();
 
   votes = {};
@@ -727,7 +738,6 @@ async function loadData(){
     const key = d.name + "_" + d.emoji;
     votes[d.month][key] = (votes[d.month][key] || 0) + 1;
   });
-
 }
 
 function exportExcel(){
