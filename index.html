@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+
+<title>ขวัญใจสสอ.บึงโขงหลง</title>
+
+<style>
+  :root{
+  --main:#7E57C2;
+}
+.menu button{
+  background:var(--main);
+}
+
+.fill{
+  background:var(--main);
+}
+
+#reportTable th{
+  background:var(--main);
+}
+
+.count{
+  color:var(--main);
+}
+  .admin-box input{
+  padding:6px;
+  margin:4px;
+  width: calc(100% - 20px);
+}
+
+.admin-item{
+  display:flex;
+  justify-content:space-between;
+  padding:8px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+}
+
+.admin-item button{
+  margin-left:5px;
+  font-size:12px;
+}
+
+:root{
+  --main:#7E57C2;
+}
+
+.menu button{
+  background:var(--main);
+}
+
+.fill{
+  background:var(--main);
+}
+
+#reportTable th{
+  background:var(--main);
+}
+
+.count{
+  color:var(--main);
+}
+
+body{
+  font-family:'Sarabun',sans-serif;
+  background:#F9FAFB;
+  margin:0;padding:10px;color:#111827;
+}
+
+  display:flex;justify-content:space-between;align-items:center;
+  background:white;padding:12px;border-radius:16px;margin-bottom:10px;
+}
+
+.title{font-size:18px;font-weight:600;}
+
+.menu{display:flex;flex-wrap:wrap;gap:6px;}
+.menu button{
+  font-size:12px;padding:8px;border:none;border-radius:10px;
+  background:#7E57C2;color:white;
+}
+
+.section{
+  background:white;padding:12px;border-radius:16px;
+  margin-bottom:10px;border:1px solid #E5E7EB;
+}
+
+.grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+
+.card{
+  background:white;border-radius:14px;padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.name{font-size:14px;font-weight:600;}
+.role{font-size:12px;color:#6B7280;}
+
+.score{
+  background:#F59E0B;color:white;
+  padding:4px 8px;border-radius:12px;
+  font-size:12px;margin:5px 0;display:inline-block;
+}
+
+.emoji-row{display:flex;gap:6px;}
+
+.emoji-box{
+  flex:1;background:#f3f4f8;border-radius:10px;
+  padding:6px;text-align:center;font-size:14px;
+  cursor:pointer;
+}
+
+.count{font-size:12px;color:#7E57C2;}
+
+.bar{
+  height:8px;background:#E5E7EB;border-radius:10px;
+  overflow:hidden;margin-top:6px;
+}
+
+.fill{height:100%;background:#7E57C2;}
+
+.rank1 .fill{background:#F59E0B;}
+
+#top10 .item{
+  background:#f3f4f8;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+.rank-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  font-weight:600;
+}
+
+.rank-left{display:flex;gap:8px;}
+
+.rank-number{color:#F59E0B;font-weight:bold;}
+
+#reportTable{
+  width:100%;border-collapse:collapse;font-size:13px;
+}
+
+#reportTable th{
+  background:#7E57C2;color:white;padding:8px;
+}
+
+#reportTable td{
+  padding:6px;border-bottom:1px solid #E5E7EB;text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div style="text-align:center; margin:10px 0;">
+  <h2 id="monthTitle">📅 เดือน -</h2>
+</div>
+  <div class="title">🏆 ขวัญใจสสอ.บึงโขงหลง</div>
+  <div class="menu">
+    <button onclick="showPage('vote')">🗳️</button>
+    <button onclick="showPage('report')">📊</button>
+    <button onclick="showPage('admin')">⚙️</button>
+    <button onclick="logout()">🚪</button>
+    <button onclick="exportExcel()">📥 Export Excel</button>
+  <select id="voteMonth" onchange="changeMonth(this.value)"></select>
+
+  </div>
+</div>
+
+<!-- VOTE -->
+<div id="votePage">
+  <div class="grid" id="list"></div>
+</div>
+
+<!-- REPORT -->
+<div id="reportPage" style="display:none;">
+
+  <!-- 🔥 FILTER -->
+  <div class="section">
+    <h3>📅 รายงาน</h3>
+
+    <select id="reportMode" onchange="render()">
+      <option value="current">📌 เดือนปัจจุบัน</option>
+      <option value="monthly">📆 เลือกเดือน</option>
+      <option value="yearly">📊 รายปี</option>
+    </select>
+   <select id="reportMonth" onchange="render()"></select>
+
+    <select id="monthSelect" onchange="render()" style="display:none;">
+      <option value="2026-01">ม.ค.</option>
+      <option value="2026-02">ก.พ.</option>
+      <option value="2026-03">มี.ค.</option>
+      <option value="2026-04">เม.ย.</option>
+      <option value="2026-05">พ.ค.</option>
+      <option value="2026-06">มิ.ย.</option>
+      <option value="2026-07">ก.ค.</option>
+      <option value="2026-08">ส.ค.</option>
+      <option value="2026-09">ก.ย.</option>
+      <option value="2026-10">ต.ค.</option>
+      <option value="2026-11">พ.ย.</option>
+      <option value="2026-12">ธ.ค.</option>
+    </select>
+  </div>
+
+  <!-- TOP10 -->
+  <div class="section">
+    <h3 style="text-align:center;">📊 Top 10</h3>
+    <div id="top10"></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="section">
+    <table id="reportTable">
+      <thead>
+        <tr>
+          <th>อันดับ</th>
+          <th>ชื่อ</th>
+          <th>ตำแหน่ง</th>
+          <th>❤️</th>
+          <th>👍</th>
+          <th>⭐</th>
+          <th>😡</th>
+          <th>คะแนน</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<!-- ADMIN -->
+<div id="adminPage" style="display:none;">
+
+  <div class="section admin-box">
+    <h3>⚙️ จัดการพนักงาน</h3>
+
+    <input id="empName" placeholder="ชื่อพนักงาน">
+    <input id="empRole" placeholder="ตำแหน่ง">
+    <button onclick="addEmployee()">➕ เพิ่มพนักงาน</button>
+
+    <h4>📋 รายชื่อพนักงาน</h4>
+    <div id="empList"></div>
+
+    <hr>
+
+    <h4>🎨 Theme สีระบบ</h4>
+    <input type="color" id="themeColor" onchange="changeTheme(this.value)">
+  </div>
+
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbw-8zkXZ0CB4BcdWT1DG8-U3-OXD9nuE1anRoRU-I-jjdSRzUxXZnBdAOM_RO40LWs3/exec";
+const userData = localStorage.getItem("user");
+
+if(!userData){
+  window.location.href = "login.html";
+}
+
+let currentUser = JSON.parse(userData);
+let users=[
+  {username:"p",password:"p",role:"admin"},
+  {username:"s",password:"s",role:"voter"}
+];
+
+let employees=[{name:"นางจิระภา พิษภาร",role:"นักสาธารณสุข"},
+{name:"นางรุ่งนภา จันผาย",role:"พยาบาล"},
+{name:"นางฟารีดา ไขแสงจันทร์", role:"พว.ชำนาญการ"},
+{name:"นางสาวภัทรศยา โพธิ์ดง", role:"จพ.สธ.ชำนาญงาน"},
+{name:"นางสาวกมลชนก สายรัตน์", role:"นวก.สธ.ปฏิบัติการ"},
+{name:"นางอุบล เทพโพธิ์", role:"พนักงานบริการ"},
+{name:"นางสุภลักษณ์ ไชยเสน", role:"พว.ชำนาญการ (ผอ.รพ.สต.)"},
+{name:"นางกษมา ปานาง", role:"นวก.สธ.ชำนาญการ"},
+{name:"นางปานฤดี สุวงค์ภักดี", role:"พว.ชำนาญการ"},
+{name:"นางสาวหัทยา พิศภาร", role:"พนักงานช่วยการพยาบาล"},
+{name:"นางสาวศิริภรณ์ โคตรพิมพ์", role:"จพ.ทันตฯปฏิบัติงาน"},
+{name:"นางกานดา จิตรจักร", role:"แม่บ้าน"},
+{name:"นางสาวฐิติรัตน์ ปานาง", role:"พนักงานธุรการ"},
+{name:"นางนรินทร์ทิพย์ กัญญาภัทรโภคิน", role:"จพ.สธ.อาวุโส (ผอ.รพ.สต.)"},
+{name:"นายศราวุฒิ กัญญาภัทรโภคิน", role:"จพ.สธ.อาวุโส"},
+{name:"นางสาวฟ้ารุ่ง ปุณณรัตน์กุล", role:"พว.ชำนาญการ"},
+{name:"นางสาวมานิตา พิทูลทอง", role:"พว.ปฏิบัติการ"},
+{name:"นางสาวอัจฉราภรณ์ วงค์จันทะ", role:"นวก.สธ.ชำนาญการ"},
+{name:"นางสาวนัฐพร ศรีบุรมย์", role:"นวก.สาธารณสุข"},
+{name:"นางสาวฐิติยา แก้วนาง", role:"พนักงานธุรการ"},
+{name:"นางสาวชญาภา พลสาร", role:"พนักงานบริการ"},
+{name:"นายกีระติ วัฒทันติ", role:"จพ.สธ.อาวุโส (ผอ.รพ.สต.)"},
+{name:"นางสาริกา สุวรรณรอด", role:"นวก.สธ.ชำนาญการ"},
+{name:"นางนฤดี พนมจันทร์", role:"พว.ชำนาญการ"},
+{name:"นางสาวนาถระวี กุลอัก", role:"พว.ชำนาญการ"},
+{name:"นางสาวสุนิภา โมธรรม", role:"พว.ปฏิบัติการ"},
+{name:"นางสาวพิมวลัย เพ็งบ้านซอด", role:"นวก.สธ.ชำนาญการ"},
+{name:"นางสุพรัตน์ ธนพึ่งพงษ์ทอง", role:"จพ.สธ.ชำนาญงาน"},
+{name:"นางเกษร แสงคำ", role:"นวก.ชำนาญการ"},
+{name:"นางสาวปาริฉัตร ปัญญาประชุม", role:"จพ.ทันตฯชำนาญงาน"},
+{name:"นายศิลปไทย ครองสิงห์", role:"นวก.ปฏิบัติการ"},
+{name:"นางสาวเพ็ญนภา บรรณารักษ์", role:"นวก.สาธารณสุข"},
+{name:"นางสาวจิรภิญญา สุวรรณรอด", role:"นวก.สาธารณสุข"},
+{name:"นางสาวสมจิตย์ โพธิ์ดง", role:"พนักงานบริการ"},
+{name:"นางสาวศิริวิมล มานะศรี", role:"พนักงานบริการ"},
+{name:"นางเบญจมาศ พรมจันทร์", role:"พว.ชำนาญการพิเศษ (ผอ.รพ.สต.)"},
+{name:"นางวนิดา ศักขินาดี", role:"นวก.สธ.ชำนาญการ"},
+{name:"นางสาวอุไร ธนะคำดี", role:"นวก.ชำนาญการ"},
+{name:"นางสาวกอบแก้ว บุญคำภา", role:"พว.ชำนาญการ"},
+{name:"นายณนทกร บัวถนอม", role:"พว.ปฏิบัติการ"},
+{name:"นางสาวดวงฤทัย ตุ่ยสีมา", role:"นวก.สาธารณสุข"},
+{name:"นางสาวสไบแพร ดอนมืด", role:"เจ้าพนักงานธุรการ"},
+{name:"นางสาวชุติปภา พรหมอารักษ์", role:"แม่บ้าน"}];
+
+let votes={};
+let currentMonth = new Date().toISOString().slice(0,7);
+
+const emojiScores={ "❤️":2,"👍":1,"⭐":1,"😡":-1 };
+
+function login(){
+  const u=user.value,p=pass.value;
+  const f=users.find(x=>x.username===u&&x.password===p);
+
+  if(f){
+    currentUser=f;
+    alert("เข้าสู่ระบบแล้ว");
+    render();
+  }else alert("ผิด");
+}
+
+async function vote(name, emoji){
+
+  if(!currentUser || currentUser.role!=="voter"){
+    return alert("ไม่มีสิทธิ์");
+  }
+
+  const m = currentMonth;
+  const score = emojiScores[emoji];
+
+  try {
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "vote",
+        name,
+        emoji,
+        score,
+        month: m
+      })
+    });
+
+    const text = await res.text();
+    console.log("SERVER:", text);
+
+    if(!res.ok){
+      alert("server error");
+      return;
+    }
+
+    await loadData();
+    render();
+
+  } catch(err){
+    console.error(err);
+    alert("เชื่อมต่อ server ไม่ได้");
+  }
+}
+
+function changeMonth(val){
+  currentMonth = val;
+  render();
+}
+function getMode(){
+  return document.getElementById("reportMode").value;
+}
+
+function getMonth(){
+  const mSel = document.getElementById("reportMonth");
+
+  if(getMode() === "monthly"){
+    mSel.style.display = "inline-block";
+    return mSel.value; // ✅ ใช้ค่าที่เลือกจริง
+  }
+
+  mSel.style.display = "none";
+  return currentMonth; // ✅ ใช้เดือนปัจจุบันจริง
+}
+
+function render(){
+
+const monthNames = [
+ "มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน",
+ "กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"
+];
+
+// ใช้เดือนที่กำลังใช้งาน
+const keyMonth = getMonth(); // ใช้เดือนที่เลือกจริง
+const mIndex = parseInt(keyMonth.split("-")[1]) - 1;
+
+// แสดงชื่อเดือน
+document.getElementById("monthTitle").innerText =
+"📅 เดือน " + monthNames[mIndex];
+
+  const mode=getMode();
+  const key=getMonth();
+
+  let list=document.getElementById("list");
+  let tbody=document.querySelector("#reportTable tbody");
+  let top10=document.getElementById("top10");
+
+  list.innerHTML="";
+  tbody.innerHTML="";
+  top10.innerHTML="";
+
+  let arr=[];
+
+  employees.forEach(emp=>{
+
+    let h=0,l=0,s=0,a=0;
+
+    if(mode==="yearly"){
+      for(let m in votes){
+        h+=(votes[m]?.[emp.name+"_❤️"]||0);
+        l+=(votes[m]?.[emp.name+"_👍"]||0);
+        s+=(votes[m]?.[emp.name+"_⭐"]||0);
+        a+=(votes[m]?.[emp.name+"_😡"]||0);
+      }
+    }else{
+      h=votes[key]?.[emp.name+"_❤️"]||0;
+      l=votes[key]?.[emp.name+"_👍"]||0;
+      s=votes[key]?.[emp.name+"_⭐"]||0;
+      a=votes[key]?.[emp.name+"_😡"]||0;
+    }
+
+    const score=(h*2)+l+s-a;
+
+    arr.push({name:emp.name,role:emp.role,score,h,l,s,a});
+
+    list.innerHTML+=`
+    <div class="card">
+      <div class="name">${emp.name}</div>
+      <div class="role">${emp.role}</div>
+      <div class="score">${score}</div>
+
+      <div class="emoji-row">
+        <div class="emoji-box" onclick="vote('${emp.name}','❤️')">❤️<div class="count">${h}</div></div>
+        <div class="emoji-box" onclick="vote('${emp.name}','👍')">👍<div class="count">${l}</div></div>
+        <div class="emoji-box" onclick="vote('${emp.name}','⭐')">⭐<div class="count">${s}</div></div>
+        <div class="emoji-box" onclick="vote('${emp.name}','😡')">😡<div class="count">${a}</div></div>
+      </div>
+<div style="text-align:center;margin-top:6px;">
+  <button onclick="undoVote('${emp.name}')">↩️ ยกเลิกโหวตล่าสุด</button>
+</div>
+${currentUser.role==="admin" ? `
+<div style="text-align:center;margin-top:6px;">
+  <button onclick="editScore('${emp.name}','${currentMonth}')">
+    ✏️ แก้คะแนน
+  </button>
+</div>
+` : ""}
+    </div>`;
+  });
+
+  arr.sort((a,b)=>b.score-a.score);
+
+  const max=arr[0]?.score||1;
+
+  arr.slice(0,10).forEach((x,i)=>{
+    top10.innerHTML+=`
+    <div class="item rank${i+1}">
+      <div class="rank-row">
+        <div class="rank-left">
+          <div class="rank-number">${i+1}</div>
+          <div>${x.name}</div>
+        </div>
+        <div>${x.score}</div>
+      </div>
+      <div class="bar">
+        <div class="fill" style="width:${(x.score/max)*100}%"></div>
+      </div>
+    </div>`;
+  });
+
+  arr.forEach((x,i)=>{
+    tbody.innerHTML+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${x.name}</td>
+      <td>${x.role}</td>
+      <td>${x.h}</td>
+      <td>${x.l}</td>
+      <td>${x.s}</td>
+      <td>${x.a}</td>
+      <td>${x.score}</td>
+    </tr>`;
+  });
+}
+
+function addEmployee(){
+  employees.push({name:empName.value,role:empRole.value});
+  render();
+}
+function isAdmin(){
+  return currentUser && currentUser.role === "admin";
+}
+function renderEmployees(){
+
+  if(!isAdmin()) return;
+
+  const box = document.getElementById("empList");
+  box.innerHTML = "";
+
+  employees.forEach((emp, i)=>{
+
+    box.innerHTML += `
+      <div class="admin-item">
+        <div>
+          <b>${emp.name}</b><br>
+          <small>${emp.role}</small>
+        </div>
+
+        <div>
+          <button onclick="editEmployee(${i})">✏️</button>
+          <button onclick="deleteEmployee(${i})">🗑️</button>
+        </div>
+      </div>
+    `;
+  });
+}
+function addEmployee(){
+
+  if(!isAdmin()){
+    alert("ไม่มีสิทธิ์");
+    return;
+  }
+
+  const name = empName.value.trim();
+  const role = empRole.value.trim();
+
+  if(!name || !role){
+    alert("กรอกข้อมูลให้ครบ");
+    return;
+  }
+
+  employees.push({name, role});
+
+  empName.value = "";
+  empRole.value = "";
+
+  render();
+  renderEmployees();
+}
+function editEmployee(index){
+
+  if(!isAdmin()){
+    alert("ไม่มีสิทธิ์");
+    return;
+  }
+
+  const newName = prompt("แก้ชื่อ", employees[index].name);
+  const newRole = prompt("แก้ตำแหน่ง", employees[index].role);
+
+  if(newName && newRole){
+    employees[index] = {
+      name: newName,
+      role: newRole
+    };
+
+    render();
+    renderEmployees();
+  }
+}
+function deleteEmployee(index){
+
+  if(!isAdmin()){
+    alert("ไม่มีสิทธิ์");
+    return;
+  }
+
+  if(confirm("ยืนยันลบพนักงานนี้?")){
+    employees.splice(index,1);
+    render();
+    renderEmployees();
+  }
+}
+function changeTheme(color){
+  document.documentElement.style.setProperty("--main", color);
+}
+function showPage(p){
+
+  votePage.style.display="none";
+  reportPage.style.display="none";
+  adminPage.style.display="none";
+
+  if(p==="vote") votePage.style.display="block";
+  if(p==="report") reportPage.style.display="block";
+
+  if(p==="admin"){
+    if(!isAdmin()){
+      alert("เฉพาะแอดมิน");
+      return;
+    }
+    adminPage.style.display="block";
+    renderEmployees();
+  }
+  render();
+}
+// =====================
+// 📅 สร้างรายการเดือน
+// =====================
+
+function initMonthSelector(){
+
+  const select = document.getElementById("monthSelect");
+
+  if(!select) return; // 🔥 กัน error
+
+  const now = new Date();
+  const year = now.getFullYear();
+
+  select.innerHTML = ""; // 🔥 กันซ้ำ
+
+  for(let i=0;i<12;i++){
+    const m = String(i+1).padStart(2,'0');
+    const value = `${year}-${m}`;
+
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = `${m}/${year}`;
+
+    select.appendChild(option);
+  }
+
+  // 👉 ตั้งค่าเดือนปัจจุบัน
+  const current = now.toISOString().slice(0,7);
+  select.value = current;
+
+  currentMonth = current; // 🔥 ใช้กับระบบโหวต
+}
+function initReportMonth(){
+
+  const select = document.getElementById("reportMonth");
+  if(!select) return;
+
+  const now = new Date();
+  const year = now.getFullYear();
+
+  select.innerHTML = "";
+
+  const monthNames = [
+    "ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
+    "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."
+  ];
+
+  for(let i=0;i<12;i++){
+    const m = String(i+1).padStart(2,'0');
+    const value = `${year}-${m}`;
+
+    const option = document.createElement("option");
+    option.value = value;
+
+    // ✅ ใช้ชื่อเดือน
+    option.textContent = monthNames[i];
+
+    select.appendChild(option);
+  }
+
+  // ตั้งค่าเดือนปัจจุบัน
+  select.value = now.toISOString().slice(0,7);
+}
+function initVoteMonth(){
+
+  const select = document.getElementById("voteMonth");
+  if(!select) return;
+
+  const now = new Date();
+  const year = now.getFullYear();
+
+  const monthNames = [
+    "ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
+    "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."
+  ];
+
+  select.innerHTML = "";
+
+  for(let i=0;i<12;i++){
+    const m = String(i+1).padStart(2,'0');
+    const value = `${year}-${m}`;
+
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = monthNames[i];
+
+    select.appendChild(option);
+  }
+
+  // ✅ ตั้งค่าเดือนปัจจุบัน
+  const current = now.toISOString().slice(0,7);
+  select.value = current;
+  currentMonth = current;
+}
+window.onload = async function(){
+  initMonthSelector();
+  initVoteMonth();
+  initReportMonth();
+  await loadData(); // ✅ เพิ่ม
+  render();
+};
+function logout(){
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
+async function loadData(){
+
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  votes = {};
+
+  data.forEach(d=>{
+
+    if(!votes[d.month]) votes[d.month]={};
+    if(!votes[d.month][d.name]) votes[d.month][d.name]=0;
+
+    votes[d.month][d.name] += Number(d.score);
+
+    const key = d.name + "_" + d.emoji;
+    votes[d.month][key] = (votes[d.month][key] || 0) + 1;
+  });
+
+}
+
+function exportExcel(){
+
+  fetch(API_URL + "?action=export")
+    .then(res => res.json())
+    .then(data => {
+      window.open(data.url, "_blank");
+    });
+}
+function undoVote(name){
+
+  if(!currentUser || currentUser.role !== "voter"){
+    return alert("ไม่มีสิทธิ์");
+  }
+
+  if(!confirm("ต้องการยกเลิกโหวตล่าสุดของ " + name + " ?")) return;
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "undo",
+      name: name,
+      month: currentMonth,
+      user: currentUser.username
+    })
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert(msg);
+    loadData().then(render);
+  });
+}
+function editScore(name, month){
+
+  if(!currentUser || currentUser.role !== "admin"){
+    alert("เฉพาะแอดมิน");
+    return;
+  }
+
+  const oldEmoji = prompt("emoji เดิม (❤️👍⭐😡)");
+  const oldScore = prompt("คะแนนเดิม (2,1,1,-1)");
+
+  const newEmoji = prompt("emoji ใหม่");
+  const newScore = prompt("คะแนนใหม่");
+
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "edit",
+      name: name,
+      month: month,
+      oldEmoji,
+      oldScore,
+      newEmoji,
+      newScore,
+      user: currentUser.username
+    })
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert(msg);
+    loadData().then(render); // 🔥 realtime refresh
+  });
+}
+</script>
+</body>
+</html>
